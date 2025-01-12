@@ -10,12 +10,15 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import useGoogleLogin from "@/hooks/use-googleLogin";
 import { redirect } from "next/navigation";
+import { $user } from "@/app/store/users";
+import { useStore } from "@nanostores/react";
 
 export default function AuthPage({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { user, error, loading, loginWithGoogle, logout } = useGoogleLogin();
+  const { loginWithGoogle } = useGoogleLogin();
+  const user = useStore($user);
 
   useEffect(() => {
     console.log(user);
