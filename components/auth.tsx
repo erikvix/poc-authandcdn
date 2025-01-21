@@ -2,30 +2,50 @@
 
 import { GalleryVerticalEnd, Github } from "lucide-react";
 import React, { useEffect } from "react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import useGoogleLogin from "@/hooks/use-googleLogin";
 import { redirect } from "next/navigation";
-import { $user } from "@/app/store/users";
+import { $user, setUser } from "@/app/store/users";
 import { useStore } from "@nanostores/react";
+import { checkUserSession, loginWithProvider } from "@/app/actions/authAction";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { loginWithGoogle } = useGoogleLogin();
   const user = useStore($user);
+  const router = useRouter();
+
+  // Handle login
+  const handleLogin = async (provider: "google" | "github") => {
+    try {
+      await loginWithProvider(provider);
+      const currentUser = await checkUserSession();
+      if (currentUser) {
+        setUser(currentUser);
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    console.log(user);
-    if (user) {
-      redirect("/dashboard");
-    }
-  }, [user]);
+    const verifyUserSession = async () => {
+      const currentUser = await checkUserSession();
+
+      if (currentUser) {
+        console.log("Usuário autenticado:", currentUser);
+        setUser(currentUser);
+        router.push("/dashboard");
+      }
+    };
+    verifyUserSession();
+  }, [user, router]);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -43,7 +63,7 @@ export default function AuthPage({
             </a>
             <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
             <div className="text-center text-sm flex flex-col gap-1">
-              Don&apos;t have an account?{""}
+              Don&apos;t have an account?{" "}
               <a href="#" className="underline underline-offset-4">
                 Sign up
               </a>
@@ -69,12 +89,16 @@ export default function AuthPage({
             </span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Button variant="outline" className="w-full">
+            <Button
+              onClick={() => handleLogin("github")}
+              variant="outline"
+              className="w-full"
+            >
               <Github className="w-6 h-6" />
-              <Link href="/dashboard">Continue with Github</Link>
+              Continue with Github
             </Button>
             <Button
-              onClick={loginWithGoogle}
+              onClick={() => handleLogin("google")}
               variant="outline"
               className="w-full"
             >

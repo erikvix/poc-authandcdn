@@ -18,9 +18,9 @@ export function UserDropdown() {
   const user = useStore($user);
   const { logout, isAuthenticated } = useGoogleLogin();
 
-  if (!isAuthenticated) {
-    return redirect("/");
-  }
+  // if (!isAuthenticated) {
+  //   return redirect("/");
+  // }
 
   return (
     <DropdownMenu>
