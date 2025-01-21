@@ -11,16 +11,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, CreditCard, LogOut, User as UserIcon } from "lucide-react";
 import { useStore } from "@nanostores/react";
 import { $user } from "@/app/store/users";
-import useGoogleLogin from "@/hooks/use-googleLogin";
-import { redirect } from "next/navigation";
+import { checkUserSession, logoutUser } from "@/app/actions/authAction";
+import { useEffect } from "react";
 
 export function UserDropdown() {
   const user = useStore($user);
-  const { logout, isAuthenticated } = useGoogleLogin();
 
-  // if (!isAuthenticated) {
-  //   return redirect("/");
-  // }
+  useEffect(() => {
+    const userTest = () =>
+      checkUserSession().then((user) => {
+        console.log(user);
+      });
+    userTest();
+  }, [user]);
 
   return (
     <DropdownMenu>
@@ -59,7 +62,7 @@ export function UserDropdown() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <LogOut onClick={logout} className="mr-2 h-4 w-4" />
+          <LogOut onClick={logoutUser} className="mr-2 h-4 w-4" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

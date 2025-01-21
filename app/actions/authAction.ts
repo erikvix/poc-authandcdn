@@ -14,6 +14,7 @@ import { FirebaseError } from "firebase/app";
 import { redirect } from "next/navigation";
 import { setUser } from "../store/users";
 import { useRouter } from "next/router";
+import { Router } from "lucide-react";
 
 export async function loginWithProvider(providerName: "google" | "github") {
   const auth = getAuth(app);
@@ -48,6 +49,8 @@ export async function logoutUser() {
   try {
     await signOut(auth);
     console.log("Usuário deslogado com sucesso.");
+    const router = useRouter();
+    router.push("/");
   } catch (error) {
     if (error instanceof FirebaseError) {
       console.error("Erro ao deslogar o usuário:", error.message);

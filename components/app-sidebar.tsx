@@ -70,14 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <UserDropdown
-              user={{
-                name: "test",
-                email: "m@example.com",
-                image:
-                  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-SgD2g5Rhd5vP5pjqk8kHaOWsOsxGrO.png",
-              }}
-            />
+            <UserDropdown />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
