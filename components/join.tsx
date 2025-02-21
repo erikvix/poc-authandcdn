@@ -41,19 +41,6 @@ export default function JoinPage({
     }
   };
 
-  // useEffect(() => {
-  //   const verifyUserSession = async () => {
-  //     const currentUser = await checkUserSession();
-
-  //     if (currentUser) {
-  //       console.log("Usuário autenticado:", currentUser);
-  //       setUser(currentUser);
-  //       router.push("/dashboard");
-  //     }
-  //   };
-  //   verifyUserSession();
-  // }, [user, router]);
-
   return (
     <Card className="">
       <div>
