@@ -6,3 +6,5 @@ export const $user = atom<User | null>(null);
 export function setUser(user: User | null) {
   $user.set(user);
 }
+
+export const $streak = atom<Number>(3);

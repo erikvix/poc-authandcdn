@@ -1,7 +1,4 @@
 import * as React from "react";
-
-import { SearchForm } from "@/components/search-form";
-import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -16,25 +13,24 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { UserDropdown } from "./user-dropdown";
+import Image from "next/image";
+import zanarkand from "@/public/zanarkand.png";
 
 // This is sample data.
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: "Getting Started",
+      title: "Home",
+      url: "/dashboard/week",
+      isActive: true,
+    },
+    {
+      title: "Training",
+      url: "/dashboard/training",
+    },
+    {
+      title: "Project Structure",
       url: "#",
-      items: [
-        {
-          title: "Installation",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Project Structure",
-          url: "#",
-        },
-      ],
     },
   ],
 };
@@ -43,29 +39,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
-        <SearchForm />
+        <div className="flex items-center gap-2">
+          <Image
+            className="w-12 px-2 py-1 rounded-md shadow-md h-12"
+            height={24}
+            width={24}
+            alt="Zanarkand"
+            src={zanarkand}
+          />
+          <h1 className="text-xl font-semibold">Zanarkand</h1>
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.navMain.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={item.isActive}>
+                    <a href={item.url}>{item.title}</a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

@@ -68,3 +68,12 @@ body {
   }
 }
 
+@layer base {
+  * {
+    @apply border-border font-nunito;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
