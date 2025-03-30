@@ -18,19 +18,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dumbbell, Trash2 } from "lucide-react";
 import WorkoutDayCard from "@/components/workout-day-card";
-
-type Exercise = {
-  id: string;
-  name: string;
-  sets: number;
-  reps: number;
-};
+import { Exercise, WorkoutPlan } from "@/types";
+import { createUserWorkoutPlan } from "@/app/actions/workoutAction";
 
 export default function ExercisePlanner() {
   const [daysPerWeek, setDaysPerWeek] = useState<number | null>(null);
   const [showDayCards, setShowDayCards] = useState<boolean>(false);
   const [createPlan, setCreatePlan] = useState<boolean>(false);
   const [exercise, SetExercises] = useState<Exercise[]>([]);
+  const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan>({});
 
   const handleDaysChange = (value: string) => {
     setDaysPerWeek(Number.parseInt(value));
@@ -42,14 +38,23 @@ export default function ExercisePlanner() {
     }
   };
 
-  const handleSubmitPlan = () => {
-    console.log(exercise);
+  const weekdays = [
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sábado",
+    "Domingo",
+  ];
+  const dayName = (dayNumber: number) => {
+    return weekdays[(dayNumber - 1) % 7];
   };
 
-  const removeExercise = (id: string) => {
-    SetExercises((prevExercises) =>
-      prevExercises.filter((exercise) => exercise.id !== id)
-    );
+  const handleSubmitPlan = () => {
+    console.log(workoutPlan);
+
+    createUserWorkoutPlan(workoutPlan);
   };
 
   return (
@@ -104,14 +109,22 @@ export default function ExercisePlanner() {
             Seu Plano de Treino de {daysPerWeek} Dias
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: daysPerWeek }).map((_, index) => (
-              <WorkoutDayCard
-                key={index}
-                exercises={exercise}
-                setExercises={SetExercises}
-                dayNumber={index + 1}
-              />
-            ))}
+            {Array.from({ length: daysPerWeek }).map((_, index) => {
+              const day = index + 1;
+              return (
+                <WorkoutDayCard
+                  key={dayName(day)}
+                  dayNumber={day}
+                  exercises={workoutPlan[dayName(day)] || []}
+                  onUpdatePlan={(exercises: Exercise[]) =>
+                    setWorkoutPlan((prevPlan) => ({
+                      ...prevPlan,
+                      [dayName(day)]: exercises,
+                    }))
+                  }
+                />
+              );
+            })}
           </div>
           <div className="mt-6">
             <Button
@@ -121,29 +134,6 @@ export default function ExercisePlanner() {
             >
               Criar Plano de Treino
             </Button>
-          </div>
-          <div className="mt-6">
-            {exercise.map((exercise) => (
-              <div
-                key={exercise.id}
-                className="flex items-center justify-between bg-muted p-2 rounded-md"
-              >
-                <div>
-                  <p className="font-medium">{exercise.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {exercise.sets} séries x {exercise.reps} repetições
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeExercise(exercise.id)}
-                  className="h-7 w-7"
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-            ))}
           </div>
         </div>
       )}

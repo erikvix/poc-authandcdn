@@ -12,7 +12,6 @@ export default function CalendarContainer() {
 
   const [date, setDate] = React.useState<Date[] | undefined>(initialDates);
 
-  console.log(date);
   return (
     <Calendar
       mode="multiple"

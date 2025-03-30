@@ -47,7 +47,6 @@ const useAuth = () => {
   };
 
   const loginWithGithub = async () => {
-    console.log("entering login with github");
     try {
       await signInWithRedirect(auth, githubProvider);
       setUser(user);

@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar, Plus, Trash2 } from "lucide-react";
-import { v4 as uuidv4 } from "uuid"; // Install uuid library if not already installed
 
 const workoutTypes = {
   peito: [
@@ -61,7 +60,6 @@ const workoutTypes = {
 };
 
 type Exercise = {
-  id: string;
   name: string;
   sets: number;
   reps: number;
@@ -70,16 +68,16 @@ type Exercise = {
 type WorkoutCardProps = {
   dayNumber: number;
   exercises: Exercise[];
-  setExercises: React.Dispatch<React.SetStateAction<Exercise[]>>;
+  onUpdatePlan: (exercises: Exercise[]) => void;
 };
 
 export default function WorkoutCard({
   dayNumber,
-  exercises,
-  setExercises,
+  onUpdatePlan,
 }: WorkoutCardProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
   const [suggestedExercises, setSuggestedExercises] = useState<string[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
   const [newExercise, setNewExercise] = useState("");
   const [sets, setSets] = useState(3);
@@ -96,19 +94,22 @@ export default function WorkoutCard({
     setNewExercise(exercise);
   };
 
-  const addExercise = () => {
-    if (newExercise.trim()) {
-      setExercises([
-        ...exercises,
-        { id: uuidv4(), name: newExercise, sets, reps },
-      ]);
-      setNewExercise("");
-    }
+  const handleRemoveExercise = (index: number) => {
+    const updatedExercises = exercises.filter((_, i) => i !== index);
+    setExercises(updatedExercises);
+    onUpdatePlan(updatedExercises);
   };
 
-  const removeExercise = (id: string) => {
-    const updatedExercises = exercises.filter((exercise) => exercise.id !== id);
-    setExercises(updatedExercises);
+  const addExercise = () => {
+    if (newExercise.trim()) {
+      const updatedExercises = [
+        ...exercises,
+        { name: newExercise, sets, reps },
+      ];
+      onUpdatePlan(updatedExercises);
+      setExercises(updatedExercises);
+      setNewExercise("");
+    }
   };
 
   const weekdays = [
@@ -232,9 +233,9 @@ export default function WorkoutCard({
             <div className="space-y-2 pt-2 border-t">
               <h3 className="text-sm font-medium">Exercícios do dia:</h3>
               <div className="space-y-2">
-                {exercises.map((exercise) => (
+                {exercises.map((exercise, index) => (
                   <div
-                    key={exercise.id}
+                    key={index}
                     className="flex items-center justify-between bg-muted p-2 rounded-md"
                   >
                     <div>
@@ -244,9 +245,9 @@ export default function WorkoutCard({
                       </p>
                     </div>
                     <Button
+                      onClick={() => handleRemoveExercise(index)}
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeExercise(exercise.id)}
                       className="h-7 w-7"
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
