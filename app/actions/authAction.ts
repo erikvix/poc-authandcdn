@@ -9,11 +9,12 @@ import {
   User,
   browserLocalPersistence,
 } from "firebase/auth";
-import { app } from "@/lib/firebase";
+import { app, db } from "@/lib/firebase";
 import { FirebaseError } from "firebase/app";
 import { redirect } from "next/navigation";
 import { setUser } from "../store/users";
 import { useRouter } from "next/router";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export async function loginWithProvider(providerName: "google" | "github") {
   const auth = getAuth(app);
@@ -28,6 +29,21 @@ export async function loginWithProvider(providerName: "google" | "github") {
     await setPersistence(auth, browserLocalPersistence);
 
     const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    const userCollection = doc(db, "users", user.uid);
+
+    const userDB = await getDoc(userCollection);
+    if (!userDB.exists()) {
+      await setDoc(userCollection, {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+      });
+
+      console.log("Usuário criado no Firestore:", user.uid);
+    }
 
     setUser(result.user);
     console.log("Usuário autenticado:", result.user);

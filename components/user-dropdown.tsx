@@ -30,7 +30,7 @@ export function UserDropdown() {
       <DropdownMenuTrigger asChild>
         <button className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.photoURL || ""} />
+            <AvatarImage src={user?.photoURL || undefined} />
             <AvatarFallback>{user?.displayName?.[0]}</AvatarFallback>
           </Avatar>
           <div className="flex flex-1 flex-col">
